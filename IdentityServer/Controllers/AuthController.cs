@@ -1,4 +1,5 @@
 ﻿using IdentityServer.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,9 +19,12 @@ namespace IdentityServer.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
         }
+
+      
         [HttpGet]
         public IActionResult Login(string returnUrl)
         {
+            
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -33,19 +37,15 @@ namespace IdentityServer.Controllers
             {
                 return Redirect(model.ReturnUrl);
             }
-            else if (result.IsLockedOut)
-            {
-
-            }
-
-
-            return View();
+           
+             return View();   
         }
         
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
             return View(new RegisterViewModel { ReturnUrl = returnUrl });
+        
         }
 
         [HttpPost]
@@ -61,10 +61,11 @@ namespace IdentityServer.Controllers
 
             if (result.Succeeded)
             {
-                _signInManager.SignInAsync(user, false);
-                return Redirect(model.ReturnUrl);
+                await _signInManager.SignInAsync(user, false);
+                return RedirectToAction(model.ReturnUrl);
             }
             return View();
         }
+    
     }
 }

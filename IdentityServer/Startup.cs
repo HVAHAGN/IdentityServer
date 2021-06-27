@@ -17,6 +17,7 @@ namespace IdentityServer
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddDbContext<AppDbContext>(config =>
             {
                 config.UseInMemoryDatabase("Memory");
@@ -30,17 +31,20 @@ namespace IdentityServer
             })
                 .AddEntityFrameworkStores<AppDbContext>()
                         .AddDefaultTokenProviders();
-
+           
+            services.AddAuthentication();
             services.ConfigureApplicationCookie(config =>
             {
                 config.Cookie.Name = "IdentityServer.Cookie";
                 config.LoginPath = "/Auth/Login";
             });
+
             services.AddIdentityServer().
                 AddAspNetIdentity<IdentityUser>().
                 AddInMemoryClients(Configuration.GetClients()).
                 AddInMemoryApiResources(Configuration.GetApis()).
                 AddDeveloperSigningCredential();
+
             services.AddControllersWithViews();
         }
 
@@ -51,9 +55,10 @@ namespace IdentityServer
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthorization();
             app.UseIdentityServer();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();

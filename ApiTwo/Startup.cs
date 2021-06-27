@@ -8,29 +8,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace MvcClient
+namespace ApiTwo
 {
     public class Startup
     {
-
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            services.AddAuthentication(config =>
-            {
-                config.DefaultScheme = "Cookie";
-                config.DefaultChallengeScheme = "oidc";
-            })
-                .AddCookie("Cookie")
-                .AddOpenIdConnect("oidc", config =>
-                {
-                    config.Authority = "https://localhost:44305/";
-                    config.ClientId = "client_id_mvc";
-                    config.ClientSecret = "client_secret_mvc";
-                    config.SaveTokens =true;
-                    config.ResponseType = "code";
-                });
+            services.AddAuthentication("Bearer").AddJwtBearer("Bearer", config => {
+                config.Authority = "https://localhost:44326/";
+                config.Audience = "ApiTwo";
+
+            });
+
+            services.AddHttpClient();
+
+            services.AddConnections();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -40,14 +34,12 @@ namespace MvcClient
             }
 
             app.UseRouting();
-
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
             });
         }
     }
