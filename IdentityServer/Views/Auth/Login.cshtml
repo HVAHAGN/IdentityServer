@@ -20,9 +20,6 @@
 <div style="text-align:center">
     <button>
         <a style="text-decoration:none" asp-controller="Auth" asp-action="Register"
-           asp-route-returnUrl=(@(if(@Model.ReturnUrl == null) 
-           {
-               Model.ReturnUrl = "/Auth/Register";
-           })>Register</a>
+           asp-route-returnUrl=@Model.ReturnUrl>Register</a>
     </button>
 </div>
