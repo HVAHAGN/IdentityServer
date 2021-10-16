@@ -10,39 +10,47 @@ namespace ApiTwo.Controllers
 {
     public class HomeController : Controller
     {
-        private IHttpClientFactory _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public HomeController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClientFactory;
+            _httpClientFactory = httpClientFactory;
         }
 
-        [Route("/")]
+        [Route("/home")]
         public async Task<IActionResult> Index()
         {
             //retrieve access token
-            var serverClient = _httpClient.CreateClient();
+            var serverClient = _httpClientFactory.CreateClient();
 
             var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://localhost:44326/");
-            var tokenResponse = await serverClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest()
-            {
-                Address=discoveryDocument.TokenEndpoint,
-                ClientId="client_id",
-                ClientSecret="client_secret",
-                Scope="ApiOne"
-            });
-            //retrieve secret data
 
-            var apiClient = _httpClient.CreateClient();
+            var tokenResponse = await serverClient.RequestClientCredentialsTokenAsync(
+                new ClientCredentialsTokenRequest
+                {
+                    Address = discoveryDocument.TokenEndpoint,
+
+                    ClientId = "client_id",
+                    ClientSecret = "client_secret",
+
+                    Scope = "ApiOne",
+                });
+
+            //retrieve secret data
+            var apiClient = _httpClientFactory.CreateClient();
+
             apiClient.SetBearerToken(tokenResponse.AccessToken);
-            var response= await apiClient.GetAsync("https://localhost:44383/secret");
-            var content =await response.Content.ReadAsStringAsync();
+
+            var response = await apiClient.GetAsync("https://localhost:44383/secret");
+
+            var content = await response.Content.ReadAsStringAsync();
 
             return Ok(new
             {
-                access_token=tokenResponse.AccessToken,
-                message=content
-            }); 
+                access_token = tokenResponse.AccessToken,
+                message = content,
+            });
         }
+
     }
 }

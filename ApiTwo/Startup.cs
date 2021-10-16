@@ -14,17 +14,17 @@ namespace ApiTwo
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication("Bearer").AddJwtBearer("Bearer", config => {
-                config.Authority = "https://localhost:44326/";
-                config.Audience = "ApiTwo";
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", config => {
+                    config.Authority = "https://localhost:44326/";
 
-            });
+                    config.Audience = "ApiTwo";
+                });
 
             services.AddHttpClient();
 
-            services.AddConnections();
+            services.AddControllers();
         }
-
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -34,7 +34,9 @@ namespace ApiTwo
             }
 
             app.UseRouting();
+
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -64,7 +64,7 @@ namespace IdentityServer.Controllers
                 await _signInManager.SignInAsync(user, false);
                 return RedirectToAction(model.ReturnUrl);
             }
-            return View();
+            return Redirect("Register");
         }
     
     }

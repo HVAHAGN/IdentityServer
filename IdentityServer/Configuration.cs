@@ -28,15 +28,17 @@ namespace IdentityServer
         new Client() {
                  ClientId="client_Id_mvc",
                  ClientSecrets={new Secret("client_secret_mvc".ToSha256()) },
-                 AllowedGrantTypes=GrantTypes.Code,
 
-                 RedirectUris={"https://localhost:44322/signin-oidc"},
-                 RequireConsent=false,
+                 AllowedGrantTypes = GrantTypes.Code,
+                    RequirePkce = true,
+
+                    RedirectUris = { "https://localhost:44366/signin-oidc" },
+                    PostLogoutRedirectUris = { "https://localhost:44366/Home/Index" },
+
+                    
                  AllowedScopes={"ApiOne", "ApiTwo", IdentityServerConstants.StandardScopes.OpenId,
                                                     IdentityServerConstants.StandardScopes.Profile }
         } };
-
-
 
 
     }
